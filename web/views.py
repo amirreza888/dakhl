@@ -71,7 +71,7 @@ def register(request):
                                  subject = "فعال سازی اکانت بستون",
                                  sender = "jadi@jadi.net",
                                  to = email,
-                                 text_body = "برای فعال سازی ایمیلی سیتون  خود روی لینک روبرو کلیک کنید: http://bestoon.ir/accounts/register/?email={}&code={}".format(email, code),
+                                 text_body = "http://bestoon.ir/accounts/register/?email={}&code={}".format(request.build_absolute_uri('/accounts/register/'), email, code),
                                  tag = "Create request")
                 message.send()
                 context = {'message': 'ایمیلی حاوی لینک فعال سازی اکانت به شما فرستاده شده، لطفا پس از چک کردن ایمیل، روی لینک کلیک کنید.'}
