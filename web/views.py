@@ -115,6 +115,11 @@ def submit_income(request):
     }, encoder=JSONEncoder)
 
 
+def index(request):
+    context={}
+    return render(request,'index.html',context)
+
+
 @csrf_exempt
 def submit_expense(request):
     """ user submit an expense """
