@@ -10,11 +10,11 @@ from datetime import datetime
 # Create your views here.
 
 from django.contrib.auth.hashers import make_password
-from postmark import PMMail
 from django.conf import settings
 import random
 import string
-import time
+from django.core.mail import send_mail
+
 
 # create random string for Toekn
 random_str = lambda N: ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(N))
@@ -61,19 +61,17 @@ def register(request):
 
         if not User.objects.filter(username = request.POST['username']).exists(): #if user does not exists
                 code = random_str(28)
-                now = datetime.now()
                 email = request.POST['email']
                 password = make_password(request.POST['password'])
                 username = request.POST['username']
-                temporarycode = Passwordresetcodes (email = email, time = now, code = code, username=username, password=password)
+                temporarycode = Passwordresetcodes (email = email, time = datetime.now(), code = code, username=username, password=password)
                 temporarycode.save()
-                message = PMMail(api_key = settings.POSTMARK_API_TOKEN,
-                                 subject = "فعال سازی اکانت بستون",
-                                 sender = "jadi@jadi.net",
-                                 to = email,
-                                 text_body = "http://bestoon.ir/accounts/register/?email={}&code={}".format(request.build_absolute_uri('/accounts/register/'), email, code),
-                                 tag = "Create request")
-                message.send()
+                send_mail(
+                                "فعال سازی اکانت بستون",
+                                "{}?email={}&code={}".format(request.build_absolute_uri(), email, code),
+                                "amirlolo6670@gmail.com",
+                                 [email],
+                                 fail_silently=False)
                 context = {'message': 'ایمیلی حاوی لینک فعال سازی اکانت به شما فرستاده شده، لطفا پس از چک کردن ایمیل، روی لینک کلیک کنید.'}
                 return render(request, 'login.html', context)
         else:
@@ -97,6 +95,8 @@ def register(request):
     else:
         context = {'message': ''}
         return render(request, 'register.html', context)
+
+
 
 
 @csrf_exempt
