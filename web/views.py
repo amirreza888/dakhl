@@ -14,7 +14,7 @@ from django.conf import settings
 import random
 import string
 from django.core.mail import send_mail
-
+from django.db.models import Sum, Count
 
 # create random string for Toekn
 random_str = lambda N: ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(N))
@@ -113,6 +113,21 @@ def submit_income(request):
     return JsonResponse({
         'status':'ok'
     }, encoder=JSONEncoder)
+
+
+@csrf_exempt
+def generalstat(request):
+    #TODO: optional arg
+    #TODO: is the token valid????? na namosaan
+    this_token = request.POST['token']
+    this_user = User.objects.filter(token__token=this_token).get()
+    income = Income.objects.filter(user=this_user).aggregate(Count('amount'), Sum('amount'))
+    expense = Expense.objects.filter(user=this_user).aggregate(Count('text'), Sum('amount'))
+    print (expense)
+    contex= {}
+    contex['expense'] = expense
+    contex['income'] = income
+    return JsonResponse(contex, encoder=JSONEncoder)
 
 
 def index(request):
