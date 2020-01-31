@@ -1,7 +1,0 @@
-{
-  "name": "bestoon",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
