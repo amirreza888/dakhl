@@ -21,7 +21,7 @@ class Token(models.Model):
 
 
 class Expense(models.Model):
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length=255,blank=True)
     date = models.DateTimeField()
     amount = models.BigIntegerField()
     user = models.ForeignKey(User,on_delete=models.CASCADE)
